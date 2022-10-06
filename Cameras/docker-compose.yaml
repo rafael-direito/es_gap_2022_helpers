@@ -1,0 +1,21 @@
+# @Author: Rafael Direito
+# @Date:   2022-10-05 18:25:06 (WEST)
+# @Email:  rdireito@av.it.pt
+# @Copyright: Insituto de Telecomunicações - Aveiro, Aveiro, Portugal
+# @Last Modified by:   Rafael Direito
+# @Last Modified time: 2022-10-05 18:26:15 (WEST)
+
+
+version: "3.8"
+services:
+    rabbitmq3:
+        container_name: "rabbitmq"
+        image: rabbitmq:3.8-management-alpine
+        environment:
+            - RABBITMQ_DEFAULT_USER=myuser
+            - RABBITMQ_DEFAULT_PASS=mypassword
+        ports:
+            # AMQP protocol port
+            - '5672:5672'
+            # HTTP management UI
+            - '15672:15672'
