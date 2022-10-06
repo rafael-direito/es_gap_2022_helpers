@@ -3,7 +3,7 @@
 # @Email:  rdireito@av.it.pt
 # @Copyright: Insituto de Telecomunicações - Aveiro, Aveiro, Portugal
 # @Last Modified by:   Rafael Direito
-# @Last Modified time: 2022-10-06 11:21:59
+# @Last Modified time: 2022-10-06 12:02:59
 
 import cv2
 import imutils
@@ -73,6 +73,7 @@ class Camera:
         time_now = datetime.datetime.now()
 
         frame_count = 0
+        frame_id = 0
         while video.isOpened():
 
             # check is True if reading was successful
@@ -104,7 +105,9 @@ class Camera:
                         content_encoding='binary',
                         headers={
                             "source": f"camera_{self.camera_id}",
-                            "timestamp": str(time_now)
+                            "timestamp": str(time_now),
+                            "frame_count": frame_count,
+                            "frame_id": frame_id
                         }
                     )
                     print(f"[Camera {self.camera_id}] Sent a frame to " +
@@ -112,9 +115,10 @@ class Camera:
                           f"(frame_number={frame_count}, " +
                           f"frame_timestamp={time_now})")
 
-                    key = cv2.waitKey(1)
-                    if key == ord('q'):
-                        break
+                    frame_id += 1
+                    #key = cv2.waitKey(1)
+                    #if key == ord('q'):
+                    #    break
             else:
                 break
 
