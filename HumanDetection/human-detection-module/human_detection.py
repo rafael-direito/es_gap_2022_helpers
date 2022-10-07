@@ -3,7 +3,7 @@
 # @Email:  rdireito@av.it.pt
 # @Copyright: Insituto de Telecomunicações - Aveiro, Aveiro, Portugal
 # @Last Modified by:   Rafael Direito
-# @Last Modified time: 2022-10-06 12:15:14
+# @Last Modified time: 2022-10-07 11:42:57
 
 import numpy as np
 import cv2
@@ -11,15 +11,18 @@ import sys
 import kombu
 from kombu.mixins import ConsumerMixin
 import datetime
+import os
+import glob
 
 
 # Kombu Message Consuming Human_Detection_Worker
 class Human_Detection_Worker(ConsumerMixin):
 
-    def __init__(self, connection, queues, database):
+    def __init__(self, connection, queues, database, output_dir):
         self.connection = connection
         self.queues = queues
         self.database = database
+        self.output_dir = output_dir
         self.HOGCV = cv2.HOGDescriptor()
         self.HOGCV.setSVMDetector(cv2.HOGDescriptor_getDefaultPeopleDetector())
 
@@ -84,11 +87,20 @@ class Human_Detection_Worker(ConsumerMixin):
         )
 
         # Do we need to raise an alarm?
-        self.alarm_if_needed(
+        alarm_raised = self.alarm_if_needed(
             camera_id=msg_source,
             frame_id=frame_id,
         )
 
+        if alarm_raised:
+            ts_str = frame_timestamp.replace(":", "-").replace(" ", "_")
+            filename = f"intruder_camera_id_{msg_source}" \
+                f"_frame_id_{frame_id}" \
+                f"_frame_timestamp_{ts_str}" \
+                ".jpeg"
+            output_image_path = os.path.join(self.output_dir, filename)
+            cv2.imwrite(output_image_path, image)
+            
         print("\n")
 
         # Remove Message From Queue
@@ -115,13 +127,24 @@ class Human_Detection_Worker(ConsumerMixin):
             timestamp_key = f"camera_{camera_id}_frame_{frame_id}_timestamp"
             timestamp = self.database.get(timestamp_key, "")
             print(f"[!!!] INTRUDER DETECTED AT TIMESTAMP {timestamp}[!!!]")
-
+            return True
+        return False
 
 
 class Human_Detection_Module:
 
-    def __init__(self):
+    def __init__(self, output_dir):
         self.database = {}
+        self.output_dir = output_dir
+        self.__bootstrap_output_directory()
+
+    def __bootstrap_output_directory(self):
+        if os.path.isdir(self.output_dir):
+            files = os.listdir(self.output_dir)
+            for f in files:
+                os.remove(os.path.join(self.output_dir, f))
+        else:
+            os.mkdir(self.output_dir)
 
     def start_processing(self, broker_url, broker_username,
                          broker_password, exchange_name, queue_name):
@@ -154,6 +177,7 @@ class Human_Detection_Module:
         self.human_detection_worker = Human_Detection_Worker(
             connection=self.kombu_connection,
             queues=self.kombu_queues,
-            database=self.database
+            database=self.database,
+            output_dir=self.output_dir
         )
         self.human_detection_worker.run()
