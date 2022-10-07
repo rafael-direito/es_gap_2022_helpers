@@ -47,9 +47,10 @@ Finally, run the camera: `python3 main.py`
 
 ## Outputs
 
+### Logs
 If everything is executed properly, once you start the camera entity, you should see the following logs:
 
-### Camera
+#### Camera
 
 ```text
 [Camera 1] Sent a frame to the human-detection module (frame_number=546, frame_timestamp=2022-10-06 12:50:12.140264)
@@ -60,7 +61,7 @@ If everything is executed properly, once you start the camera entity, you should
 ```
 
 
-### Human Detection Module
+#### Human Detection Module
 
 ```text
 I received the frame number 558 from camera_1, with the timestamp 2022-10-06 12:51:44.640264.
@@ -83,6 +84,15 @@ I received the frame number 576 from camera_1, with the timestamp 2022-10-06 12:
 I'm processing the frame...
 Frame 576 has 0 human(s), and was processed in 93.348 ms.
 ```
+
+### Intruder Images
+
+The Human Detection Module will save the video frames where intruders were detected.
+These frames, per default, will be saved in *human-detection-module/intruders*.
+
+Disclaimer: Every time you run the human-detection-module code, all previous intruders images will be deleted.
+
+
 
 ## Troubleshooting
 
