@@ -90,7 +90,7 @@ Frame 576 has 0 human(s), and was processed in 93.348 ms.
 The Human Detection Module will save the video frames where intruders were detected.
 These frames, per default, will be saved in *human-detection-module/intruders*.
 
-Disclaimer: Every time you run the human-detection-module code, all previous intruders images will be deleted.
+Disclaimer: Every time you run the human-detection-module's code, all previous images will be deleted.
 
 
 
