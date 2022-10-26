@@ -3,7 +3,7 @@
 # @Email:  rdireito@av.it.pt
 # @Copyright: Insituto de Telecomunicações - Aveiro, Aveiro, Portugal
 # @Last Modified by:   Rafael Direito
-# @Last Modified time: 2022-10-07 11:42:57
+# @Last Modified time: 2022-10-26 10:02:54
 
 import numpy as np
 import cv2
@@ -170,7 +170,8 @@ class Human_Detection_Module:
         # Kombu Connection
         self.kombu_connection = kombu.Connection(
             connection_string,
-            heartbeat=4
+            heartbeat=4,
+            ssl=True
         )
 
         # Start Human Detection Workers

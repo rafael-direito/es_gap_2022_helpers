@@ -3,7 +3,7 @@
 # @Email:  rdireito@av.it.pt
 # @Copyright: Insituto de Telecomunicações - Aveiro, Aveiro, Portugal
 # @Last Modified by:   Rafael Direito
-# @Last Modified time: 2022-10-06 12:02:59
+# @Last Modified time: 2022-10-26 10:02:40
 
 import cv2
 import imutils
@@ -31,7 +31,10 @@ class Camera:
             f"@{broker_url}/"
 
         # Kombu Connection
-        self.kombu_connection = kombu.Connection(connection_string)
+        self.kombu_connection = kombu.Connection(
+            connection_string,
+            ssl=True
+        )
         self.kombu_channel = self.kombu_connection.channel()
 
         # Kombu Exchange
